@@ -1,4 +1,4 @@
-import React from 'react'
+import React from "react";
 import Editor from "@monaco-editor/react";
 import axios from "axios";
 import { useState } from "react";
@@ -8,21 +8,31 @@ const CodeEditor = () => {
   const [input, setInput] = useState("");
   const [expectedOutput, setExpectedOutput] = useState("");
   const [passed, setPassed] = useState(false);
+  const testCase = [
+    {input: "1 2", output: "3"},
+    {input: "2 3", output: "5"},
+    {input: "3 4", output: "7"},
+    {input: "4 5", output: "9"},
+    {input: "5 6", output: "11"}
+  ];
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log(code);
     axios
-      .post("http://localhost:4000/submit", { code, input })
+      .post("http://localhost:4000/submission/cpp", { code, input, testCase })
       .then((res) => {
-        setOutput(res.data);
-        console.log(res.data);
-        console.log(expectedOutput);
-        if(res.data == expectedOutput) {
-          setPassed(true);
-        }else{
-          setPassed(false);
-        }
-        console.log(res);
+        console.log(res.data.numPassed);
+        // console.log(res.)
+        setOutput(res.data.numPassed);
+        // console.log(res.data);
+        // console.log(expectedOutput);
+        // console.log(testCase);
+        // if (res.data == expectedOutput) {
+        //   setPassed(true);
+        // } else {
+        //   setPassed(false);
+        // }
+        // console.log(res);
       })
       .catch((err) => {
         console.log(err);
@@ -61,7 +71,10 @@ const CodeEditor = () => {
           type="text"
           onChange={(e) => setExpectedOutput(e.target.value)}
         />
-        <button className="mt-3 rounded-md bg-indigo-600 px-3.5 py-1.5 text-base font-semibold leading-7 text-white hover:bg-indigo-500 " onClick={handleSubmit}>
+        <button
+          className="mt-3 rounded-md bg-indigo-600 px-3.5 py-1.5 text-base font-semibold leading-7 text-white hover:bg-indigo-500 "
+          onClick={handleSubmit}
+        >
           Run Code
         </button>
         {passed && <p className="text-green-500">Passed</p>}
@@ -70,6 +83,6 @@ const CodeEditor = () => {
       </div>
     </div>
   );
-}
+};
 
 export default CodeEditor;
